@@ -1,6 +1,6 @@
 {
-  "name": "my-turborepo",
-  "version": "0.0.0",
+  "name": "async-arch",
+  "version": "0.0.1",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -9,6 +9,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:api": "turbo run dev --filter=api-gate",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
