@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
+import { ProduceMessageDto } from './dto/produce-message.dto';
 import { EntitiesService } from './entities.service';
 import { CreateEntityDto } from './dto/create-entity.dto';
 import { UpdateEntityDto } from './dto/update-entity.dto';
@@ -38,5 +39,10 @@ export class EntitiesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.entitiesService.remove(+id);
+  }
+
+  @Post('message')
+  produceMessage(@Body() produceMessageDto: ProduceMessageDto) {
+    return this.entitiesService.produceMessage(produceMessageDto);
   }
 }

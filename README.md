@@ -1,4 +1,4 @@
-# CRUD API template NestJs app
+# CRUD API template NestJS app
 
 run ```yarn start:dev``` for development \
 OR \
