@@ -44,6 +44,7 @@ yarn-error.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-/apps/api-gate/db-data/
+/apps/auth/db-data/
 # turbo
 .turbo
+/apps/auth/dist/
