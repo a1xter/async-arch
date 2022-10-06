@@ -13,7 +13,7 @@ export class UsersService {
     private readonly producerService: ProducerService
   ) {}
 
-  create(createUserDto: CreateUserDto): Promise<User> {
+  create(createUserDto: CreateUserDto): Promise<User | Error> {
     return this.dbService.createUser(createUserDto);
   }
 
