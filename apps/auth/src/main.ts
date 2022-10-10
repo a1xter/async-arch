@@ -9,7 +9,8 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-    }),
+      transform: true
+    })
   );
   app.enableCors();
   await app.listen(parseInt(process.env.PORT, 10) || 8080);
@@ -18,4 +19,6 @@ async function bootstrap() {
   await prismaService.enableShutdownHooks(app);
 }
 
-bootstrap();
+bootstrap().then(() => {
+  console.log(`app started on port: ${parseInt(process.env.PORT, 10) || 8080}`);
+});

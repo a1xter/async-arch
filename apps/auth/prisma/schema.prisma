@@ -12,17 +12,18 @@ datasource db {
 
 model User {
   id         Int       @id @default(autoincrement())
+  publicId   String    @unique
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   username   String    @unique
   email      String    @unique
   password   String
-  role       Role      @default(USER)
+  role       Role      @default(user)
 
   @@map("user")
 }
 
 enum Role {
-  USER
-  ADMIN
+  user
+  admin
 }
