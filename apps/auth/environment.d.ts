@@ -8,5 +8,7 @@ declare namespace NodeJS {
     KAFKA_BROKER?: string;
     KAFKA_USER?: string;
     KAFKA_PASSWORD?: string;
+    JWT_SECRET?: string;
+    JWT_EXP?: string;
   }
 }

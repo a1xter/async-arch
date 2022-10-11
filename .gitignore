@@ -44,7 +44,11 @@ yarn-error.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-/apps/auth/db-data/
+
 # turbo
 .turbo
+
+# temp folders
+/apps/auth/db-data/
+/db-data/
 /apps/auth/dist/
