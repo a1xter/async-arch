@@ -8,7 +8,8 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
+      envFilePath: '.env.local'
     }),
     DbModule,
     UsersModule,

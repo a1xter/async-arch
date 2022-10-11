@@ -28,6 +28,8 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+apps/auth/.env.local
+apps/tasks/.env.local
 
 # IDEs and editors
 /.idea
