@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "postgresql://postgres:postgres@localhost:5432/async-arch?schema=auth"
 }
 
 model User {
@@ -20,7 +20,7 @@ model User {
   password   String
   role       Role      @default(user)
 
-  @@map("user")
+  @@map("users")
 }
 
 enum Role {

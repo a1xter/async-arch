@@ -24,11 +24,16 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+apps/auth/.env
+apps/auth/prisma/.env
 apps/auth/.env.local
+apps/tasks/.env
+apps/tasks/prisma/.env
 apps/tasks/.env.local
 
 # IDEs and editors
@@ -54,3 +59,4 @@ apps/tasks/.env.local
 /apps/auth/db-data/
 /db-data/
 /apps/auth/dist/
+/apps/tasks/dist/
