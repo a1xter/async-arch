@@ -1,5 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -17,11 +16,5 @@ export class AuthController {
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto): Promise<{ accessToken: string }> {
     return await this.authService.signIn(signInDto);
-  }
-
-  @UseGuards(AuthGuard())
-  @Post('test')
-  get() {
-    return 'success';
   }
 }
