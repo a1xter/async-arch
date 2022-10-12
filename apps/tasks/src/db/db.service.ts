@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Task } from '@prisma/client';
+import { Task, User } from '@prisma/client';
 import { CreateTaskDto } from '../tasks/dto/create-task.dto';
 import { UpdateTaskDto } from '../tasks/dto/update-task.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { PrismaService } from './prisma.service';
 import * as crypto from 'crypto';
 
@@ -43,5 +44,19 @@ export class DbService {
     return this.prisma.task.delete({
       where: { publicId: id },
     });
+  }
+
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    return await this.prisma.user.create({
+      data: {...createUserDto}
+    })
+  }
+
+  async updateUser(createUserDto: CreateUserDto): Promise<User> {
+    return await this.prisma.user.update({
+      where: { publicId: createUserDto.publicId },
+      data: {...createUserDto}
+    })
+
   }
 }

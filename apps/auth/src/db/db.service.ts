@@ -82,10 +82,9 @@ export class DbService {
     updateEntityDto: UpdateUserDto
   ): Promise<UserInterface> {
     try {
-      const { username } = updateEntityDto;
       const user = await this.prisma.user.update({
         where: { publicId: id },
-        data: { username }
+        data: { ...updateEntityDto }
       });
 
       return this.transformUserObject(user);
