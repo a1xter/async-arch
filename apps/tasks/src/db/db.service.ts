@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Task, User } from '@prisma/client';
-import { CreateTaskDto } from '../tasks/dto/create-task.dto';
+import { CreateTaskInterface } from '../tasks/dto/create-task.dto';
 import { UpdateTaskDto } from '../tasks/dto/update-task.dto';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { PrismaService } from './prisma.service';
@@ -10,8 +10,8 @@ import * as crypto from 'crypto';
 export class DbService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
-    const { title, description } = createTaskDto;
+  async createTask(task: CreateTaskInterface): Promise<Task> {
+    const { title, description, userId } = task;
     const publicId = crypto.randomUUID();
 
     return this.prisma.task.create({
@@ -19,12 +19,14 @@ export class DbService {
         title,
         description,
         publicId,
+        userId
       },
     });
   }
 
   async getAllTasks(): Promise<Task[]> {
-    return this.prisma.task.findMany();
+
+    return this.prisma.task.findMany({where: { status: 'open' }});
   }
 
   async getTask(id: string): Promise<Task> {
@@ -58,5 +60,9 @@ export class DbService {
       data: {...createUserDto}
     })
 
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return this.prisma.user.findMany()
   }
 }

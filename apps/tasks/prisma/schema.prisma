@@ -18,6 +18,7 @@ model User {
   username   String    @unique
   email      String    @unique
   role       Role      @default(user)
+  tasks      Task[]
 
   @@map("users")
 }
@@ -35,6 +36,8 @@ model Task {
   status       String    @default("open")
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [publicId])
+  userId       String
 
   @@map("tasks")
 }

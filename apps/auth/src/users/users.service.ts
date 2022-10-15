@@ -24,7 +24,7 @@ export class UsersService {
     }
 
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'users',
+      topic: 'users_sync',
       messages: [{value: JSON.stringify(message)}]
     })
     console.log({recordMetadata})
@@ -50,7 +50,7 @@ export class UsersService {
       payload: user
     }
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'users',
+      topic: 'users_sync',
       messages: [{value: JSON.stringify(message)}]
     })
     console.log({recordMetadata});

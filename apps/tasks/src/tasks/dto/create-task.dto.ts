@@ -9,3 +9,7 @@ export class CreateTaskDto {
   @IsString()
   description: string;
 }
+
+export interface CreateTaskInterface extends CreateTaskDto {
+  userId: string;
+}

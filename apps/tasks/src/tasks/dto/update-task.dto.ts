@@ -5,9 +5,9 @@ import { CreateTaskDto } from './create-task.dto';
 export class UpdateTaskDto extends PartialType(CreateTaskDto) {
   @IsString()
   @IsOptional()
-  status: string;
+  status?: string;
 
   @IsString()
   @IsOptional()
-  assigneeId: string;
+  userId?: string;
 }
