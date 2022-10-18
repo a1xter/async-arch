@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@prisma/client": "^4.3.1",
     "@types/passport-jwt": "^3.0.7",
+    "@async-arch/types": "*",
     "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
