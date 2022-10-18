@@ -50,7 +50,11 @@ export class TasksService {
         task.publicId,
         { userId: randomUserId }
       )
-      messages.push({ value: JSON.stringify(updatedTask) });
+      const message: TaskMessageType = {
+        event: 'task.reassigned',
+        payload: updatedTask
+      }
+      messages.push({ value: JSON.stringify(message) });
     }
 
     const recordMetadata: RecordMetadata[] = await this.producerService.produce(
