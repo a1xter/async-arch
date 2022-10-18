@@ -24,11 +24,11 @@ export class AuthService {
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = bcrypt.hashSync(password, salt);
 
-    const user = await this.dbService.createUser({ ...createUserDto, password: hash });
+    const user: UserInterface = await this.dbService.createUser({ ...createUserDto, password: hash });
     if (!user) throw new InternalServerErrorException()
 
     const message: UserMessageType = {
-      type: 'create',
+      event: 'user.created',
       payload: user
     }
 
