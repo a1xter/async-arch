@@ -17,8 +17,28 @@ export class TasksService {
   async create(createTaskDto: CreateTaskDto): Promise<Task> {
     const users: User[] = await this.dbService.getAllUsers();
 
+    const { title } = createTaskDto;
+
+    function getIdFromTitle(title: string): { taskId: string; newTitle: string; } {
+      const start = title.indexOf('[')
+      const end = title.indexOf(']')
+      let taskId = '';
+      let newTitle = title;
+
+      if (start >= 0 && end >= 0) {
+        taskId = title.substring(start + 1, end)
+        newTitle = title.substring(end + 1).trim()
+      }
+
+      return { taskId, newTitle };
+    }
+
+    const { taskId, newTitle } = getIdFromTitle(title);
+
     const task: Task = await this.dbService.createTask({
       ...createTaskDto,
+      jiraId: taskId,
+      title: newTitle,
       userId: users[getRandomInt(users.length)].publicId
     });
 

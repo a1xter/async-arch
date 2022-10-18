@@ -12,14 +12,14 @@ export class UsersConsumer implements OnModuleInit {
 
     async onModuleInit() {
       await this.consumerService.consume(
-        { topics: ['streaming.users'] },
+        { topics: ['streaming.users'], fromBeginning: true },
         {
           eachMessage: async (payload) => {
             const message: UserMessageType = JSON.parse(payload.message.value.toString())
             const {username, email, role, public_id } = message.payload;
             console.log({ message });
-            switch (message.type) {
-              case 'create':
+            switch (message.event) {
+              case 'user.created':
                 console.log('create');
                 await this.dbService.createUser({
                   username,
@@ -28,7 +28,7 @@ export class UsersConsumer implements OnModuleInit {
                   publicId: public_id
                 })
                 break;
-              case 'update':
+              case 'user.updated':
                 console.log('update');
                 await this.dbService.updateUser({
                   username,
