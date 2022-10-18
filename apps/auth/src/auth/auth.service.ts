@@ -33,7 +33,7 @@ export class AuthService {
     }
 
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'users',
+      topic: 'streaming.users',
       messages: [{value: JSON.stringify(message)}]
     })
     console.log({ recordMetadata });

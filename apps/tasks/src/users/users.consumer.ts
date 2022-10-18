@@ -12,7 +12,7 @@ export class UsersConsumer implements OnModuleInit {
 
     async onModuleInit() {
       await this.consumerService.consume(
-        { topics: ['users'] },
+        { topics: ['streaming.users'] },
         {
           eachMessage: async (payload) => {
             const message: UserMessageType = JSON.parse(payload.message.value.toString())

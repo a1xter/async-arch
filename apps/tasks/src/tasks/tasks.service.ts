@@ -23,7 +23,7 @@ export class TasksService {
     });
 
     const message: TaskMessageType = {
-      type: 'created',
+      event: 'task.added',
       payload: {...task, userId: users[getRandomInt(users.length)].publicId}
     }
 

@@ -19,12 +19,12 @@ export class UsersService {
     if (!user) throw new InternalServerErrorException();
 
     const message: UserMessageType = {
-      type: 'create',
+      event: 'user.created',
       payload: user
     }
 
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'users_sync',
+      topic: 'streaming.users',
       messages: [{value: JSON.stringify(message)}]
     })
     console.log({recordMetadata})
@@ -46,11 +46,11 @@ export class UsersService {
     if (!user) throw new InternalServerErrorException();
 
     const message: UserMessageType = {
-      type: 'update',
+      event: 'user.updated',
       payload: user
     }
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'users_sync',
+      topic: 'streaming.users',
       messages: [{value: JSON.stringify(message)}]
     })
     console.log({recordMetadata});

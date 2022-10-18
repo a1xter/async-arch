@@ -7,7 +7,7 @@ type UserPayload = {
 }
 
 export interface UserMessageType {
-    type: 'update' | 'create';
+    event: 'user.updated' | 'user.created';
     payload: UserPayload;
 }
 
@@ -23,6 +23,6 @@ type TaskPayload = {
 }
 
 export interface TaskMessageType {
-  type: 'created' | 'finished' | 'reassigned';
+  event: 'task.added' | 'task.finished' | 'task.reassigned';
   payload: TaskPayload;
 }
