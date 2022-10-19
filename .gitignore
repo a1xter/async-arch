@@ -5,6 +5,10 @@ node_modules
 .pnp
 .pnp.js
 
+# temp folders
+dist
+db-data
+
 # testing
 coverage
 
@@ -54,9 +58,3 @@ apps/tasks/.env.local
 
 # turbo
 .turbo
-
-# temp folders
-/apps/auth/db-data/
-/db-data/
-/apps/auth/dist/
-/apps/tasks/dist/

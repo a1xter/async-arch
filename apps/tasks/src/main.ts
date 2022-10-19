@@ -11,7 +11,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(parseInt(process.env.PORT, 10) || 8080);
+  await app.listen(process.env.PORT ? parseInt(process.env.PORT, 10) : 8080);
 
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
@@ -19,6 +19,6 @@ async function bootstrap() {
 
 bootstrap().then(() => {
   console.log(
-    `App: Task tracker - started on port ${parseInt(process.env.PORT, 10)}`,
+    `App: Task tracker - started on port ${process.env.PORT ? parseInt(process.env.PORT, 10) : 'default'}`,
   );
 });

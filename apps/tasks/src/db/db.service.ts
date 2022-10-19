@@ -23,7 +23,7 @@ export class DbService {
     return this.prisma.task.findMany({where: { status: 'open' }});
   }
 
-  async getTask(id: string): Promise<Task> {
+  async getTask(id: string): Promise<Task | null> {
     return this.prisma.task.findUnique({
       where: { publicId: id },
     });
