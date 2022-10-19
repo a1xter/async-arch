@@ -1,4 +1,5 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException}  from '@nestjs/common';
+import { isDataValid, userMessageSchema } from '@async-arch/schema-registry';
 import { JwtService } from '@nestjs/jwt';
 import { RecordMetadata } from 'kafkajs';
 import { UserMessageType } from '@async-arch/types';
@@ -6,9 +7,11 @@ import { DbService } from '../db/db.service';
 import { ProducerService } from '../kafka/producer.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { SignInDto } from './dto/sign-in.dto';
 import { JwtInterface } from './interfaces/jwt.interface';
 import { UserInterface } from './interfaces/user.interface';
+
 
 @Injectable()
 export class AuthService {
@@ -28,16 +31,25 @@ export class AuthService {
     if (!user) throw new InternalServerErrorException()
 
     const message: UserMessageType = {
-      event: 'user.created',
-      payload: user
+      event_id: crypto.randomUUID(),
+      event_version: 1,
+      event_name: 'user.created',
+      event_time: Date.now().toString(),
+      data: user
     }
 
-    const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'streaming.users',
-      messages: [{value: JSON.stringify(message)}]
-    })
-    console.log({ recordMetadata });
-    if (recordMetadata.length === 0) console.error({error: 'cannot create a message in Kafka'});
+    const isValid = isDataValid(userMessageSchema, message)
+
+    if (isValid) {
+      const recordMetadata: RecordMetadata[] = await this.producerService.produce({
+        topic: 'streaming.users',
+        messages: [{value: JSON.stringify(message)}]
+      })
+      console.log({ recordMetadata });
+      if (recordMetadata.length === 0) console.error({error: 'cannot create a message in Kafka'});
+    } else {
+      console.error({error: 'got invalid message'});
+    }
 
     return user;
   }

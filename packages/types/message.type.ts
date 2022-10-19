@@ -1,5 +1,5 @@
 
-type UserPayload = {
+export type UserPayload = {
   public_id: string;
   username: string;
   email: string;
@@ -7,8 +7,11 @@ type UserPayload = {
 }
 
 export interface UserMessageType {
-    event: 'user.updated' | 'user.created';
-    payload: UserPayload;
+  event_id: string;
+  event_version: number;
+  event_name: 'user.updated' | 'user.created';
+  event_time: string;
+  data: UserPayload;
 }
 
 type TaskPayload = {

@@ -1,4 +1,4 @@
-import { UserMessageType } from '@async-arch/types';
+import { UserMessageType, UserPayload } from '@async-arch/types';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { RecordMetadata } from 'kafkajs';
 import { UserInterface } from '../auth/interfaces/user.interface';
@@ -6,6 +6,7 @@ import { DbService } from '../db/db.service';
 import { ProducerService } from '../kafka/producer.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as crypto from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -15,12 +16,15 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserInterface> {
-    const user = await this.dbService.createUser(createUserDto);
+    const user: UserPayload = await this.dbService.createUser(createUserDto);
     if (!user) throw new InternalServerErrorException();
 
     const message: UserMessageType = {
-      event: 'user.created',
-      payload: user
+      event_id: crypto.randomUUID(),
+      event_version: 1,
+      event_name: 'user.created',
+      event_time: Date.now().toString(),
+      data: user
     }
 
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
@@ -42,12 +46,15 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<UserInterface> {
-    const user = await this.dbService.updateUser(id, updateUserDto);
+    const user: UserPayload = await this.dbService.updateUser(id, updateUserDto);
     if (!user) throw new InternalServerErrorException();
 
     const message: UserMessageType = {
-      event: 'user.updated',
-      payload: user
+      event_id: crypto.randomUUID(),
+      event_version: 1,
+      event_time: Date.now().toString(),
+      event_name: 'user.updated',
+      data: user
     }
     const recordMetadata: RecordMetadata[] = await this.producerService.produce({
       topic: 'streaming.users',
