@@ -10,6 +10,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "dev:web": "turbo run dev --filter=web",
+    "dev:billing": "turbo run dev --filter=billing",
     "dev:auth": "turbo run dev --filter=auth",
     "dev:tasks": "turbo run dev --filter=tasks",
     "lint": "turbo run lint",
