@@ -1,8 +1,11 @@
-import { UserMessageType } from '@async-arch/types';
-import Ajv, { JSONSchemaType } from "ajv"
+import Ajv from "ajv"
+import addFormats from "ajv-formats"
+import { taskMessageSchema } from './schemes/task-message/v1/schema';
+import { transactionMessageSchema } from './schemes/transaction-message/v1/schema';
+import { userMessageSchema } from './schemes/user-message/v1/schema'
 
-export function isDataValid(schema: JSONSchemaType<UserMessageType>, data: any) {
-  const ajv = new Ajv()
-  const validate = ajv.compile(schema)
-  return !!validate(data);
-}
+export const ajv = new Ajv();
+addFormats(ajv, ["date", "time"])
+ajv.addSchema(userMessageSchema, "user.message")
+ajv.addSchema(taskMessageSchema, "task.message")
+ajv.addSchema(transactionMessageSchema, "transaction.message")

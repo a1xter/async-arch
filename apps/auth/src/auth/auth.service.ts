@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, UnauthorizedException}  from '@nestjs/common';
-import { isDataValid, userMessageSchema } from '@async-arch/schema-registry';
+import { ajv } from '@async-arch/schema-registry';
 import { JwtService } from '@nestjs/jwt';
 import { RecordMetadata } from 'kafkajs';
 import { UserMessageType } from '@async-arch/types';
@@ -12,6 +12,7 @@ import { SignInDto } from './dto/sign-in.dto';
 import { JwtInterface } from './interfaces/jwt.interface';
 import { UserInterface } from './interfaces/user.interface';
 
+const validate = ajv.getSchema<UserMessageType>("user.message")
 
 @Injectable()
 export class AuthService {
@@ -38,11 +39,11 @@ export class AuthService {
       data: user
     }
 
-    const isValid = isDataValid(userMessageSchema, message)
+    const isMessageValid: boolean = Boolean(validate && validate(message));
 
-    if (isValid) {
+    if (isMessageValid) {
       const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-        topic: 'streaming.users',
+        topic: 'users.streaming',
         messages: [{value: JSON.stringify(message)}]
       })
       console.log({ recordMetadata });

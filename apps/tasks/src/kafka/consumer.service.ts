@@ -8,7 +8,7 @@ export class ConsumerService implements OnApplicationShutdown {
   private readonly consumers: Consumer[] = [];
 
   async consume(topic: ConsumerSubscribeTopics, config: ConsumerRunConfig) {
-    const consumer = this.kafka.consumer({ groupId: 'async-arch' });
+    const consumer = this.kafka.consumer({ groupId: 'async-arch-tasks' });
     await consumer.connect();
     await consumer.subscribe(topic);
     await consumer.run(config);

@@ -12,12 +12,12 @@ export const userMessageSchema: JSONSchemaType<UserMessageType> = {
     data: {
       type: "object",
       properties: {
-        public_id: { type: "string" },
+        publicId: { type: "string" },
         username: { type: "string" },
         email: { type: "string" },
         role: { type: "string", enum: ["admin", "user"] }
       },
-      required: ["public_id", "username", "email", "role"],
+      required: ["publicId", "username", "email", "role"],
     }
   },
   required: ["event_id", "event_version", "event_name", "event_time", "data"],

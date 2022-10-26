@@ -107,7 +107,7 @@ export class DbService {
 
   transformUserObject(user: User): UserInterface {
     return {
-      public_id: user.publicId,
+      publicId: user.publicId,
       username: user.username,
       email: user.email,
       role: user.role

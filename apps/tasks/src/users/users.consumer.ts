@@ -1,8 +1,10 @@
-import { isDataValid, userMessageSchema } from '@async-arch/schema-registry';
+import { ajv } from '@async-arch/schema-registry';
 import { UserMessageType } from '@async-arch/types';
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DbService } from '../db/db.service';
 import { ConsumerService } from '../kafka/consumer.service';
+
+const validate = ajv.getSchema<UserMessageType>("user.message")
 
 @Injectable()
 export class UsersConsumer implements OnModuleInit {
@@ -13,36 +15,23 @@ export class UsersConsumer implements OnModuleInit {
 
     async onModuleInit() {
       await this.consumerService.consume(
-        { topics: ['streaming.users'], fromBeginning: true },
+        { topics: ['users.streaming'], fromBeginning: true },
         {
           eachMessage: async (payload) => {
-            const message: UserMessageType = payload.message.value
-              ? JSON.parse(payload.message.value.toString())
-              : {}
-            const isValid: boolean = isDataValid(userMessageSchema, message);
+            const message: UserMessageType = JSON.parse(JSON.stringify(payload.message.value))
+            const isValid: boolean = Boolean(validate && validate(message));
 
             if (isValid) {
-              const { username, email, role, public_id } = message.data;
               console.log({ message });
 
               switch (message.event_name) {
                 case 'user.created':
                   console.log('create');
-                  await this.dbService.createUser({
-                    username,
-                    email,
-                    role,
-                    publicId: public_id
-                  })
+                  await this.dbService.createUser({ ...message.data })
                   break;
                 case 'user.updated':
                   console.log('update');
-                  await this.dbService.updateUser({
-                    username,
-                    email,
-                    role,
-                    publicId: public_id
-                  })
+                  await this.dbService.updateUser({ ...message.data })
                   break;
               }
             } else {
