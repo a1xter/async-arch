@@ -7,15 +7,36 @@ datasource db {
   url      = "postgresql://postgres:postgres@localhost:5432/async-arch?schema=billing"
 }
 
+model User {
+  id                  Int       @id @default(autoincrement())
+  publicId            String    @unique
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  username            String    @default("unknown")
+  email               String    @default("unknown")
+  role                Role      @default(user)
+  balance             Float     @default(0.0)
+  prevBillingCycle    Float     @default(0.0)
+
+  @@map("users")
+}
+
+enum Role {
+  user
+  admin
+}
+
 model Transaction {
-  id            Int       @id @default(autoincrement())
-  publicId      String    @unique
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  amount        Float
-  type          Type
-  userPublicId  String
-  taskPublicId  String
+  id              Int       @id @default(autoincrement())
+  publicId        String    @unique
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  amount          Float
+  type            Type
+  userPublicId    String
+  taskPublicId    String    @default("")
+  billingCycle    BillingCycle  @relation(fields: [billingCycleId], references: [publicId])
+  billingCycleId  String
 
   @@map("transactions")
 }
@@ -23,4 +44,32 @@ model Transaction {
 enum Type {
   credit
   debit
+  payout
+}
+
+model BillingCycle {
+  id            Int            @id @default(autoincrement())
+  publicId      String         @unique
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  status        Status         @default(open)
+  tansactions   Transaction[]
+
+  @@map("cycles")
+}
+
+enum Status {
+  open
+  closed
+  processing
+}
+
+model InvalidMessage {
+  id            Int            @id @default(autoincrement())
+  publicId      String         @unique
+  createdAt     DateTime       @default(now())
+  topic         String
+  producer      String         @default("unknown")
+  consumer      String         @default("unknown")
+  message       Json
 }

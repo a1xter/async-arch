@@ -1,7 +1,9 @@
+import { ajv } from '@async-arch/schema-registry';
 import { TaskMessageType } from '@async-arch/types';
 import { Injectable } from '@nestjs/common';
 import { Task, User } from '@prisma/client';
-import { RecordMetadata, Message } from 'kafkajs';
+import * as crypto from 'crypto';
+import { Message, RecordMetadata } from 'kafkajs';
 import { DbService } from '../db/db.service';
 import { ProducerService } from '../kafka/producer.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -43,17 +45,31 @@ export class TasksService {
     });
 
     const message: TaskMessageType = {
-      event: 'task.added',
-      payload: {...task, userId: users[getRandomInt(users.length)].publicId}
+      event_id: crypto.randomUUID(),
+      event_version: 1,
+      event_time: Date.now().toString(),
+      event_name: 'task.added',
+      data: {
+        ...task,
+        userId: users[getRandomInt(users.length)].publicId,
+        createdAt: task.createdAt.toString(),
+        updatedAt: task.updatedAt.toString()
+      }
     }
 
-    const recordMetadata: RecordMetadata[] = await this.producerService.produce({
-      topic: 'tasks_cycle',
-      messages: [{value: JSON.stringify(message)}]
-    })
+    if (isMessageValid(message)) {
+      const recordMetadata: RecordMetadata[] = await this.producerService.produce({
+        topic: 'tasks.streaming',
+        messages: [{value: JSON.stringify(message)}]
+      })
 
-    console.log({recordMetadata})
-    if (!recordMetadata.length) console.error({error: 'cannot create a message in Kafka'})
+      console.log({recordMetadata})
+      if (!recordMetadata.length) console.error({error: 'cannot create a message in Kafka'})
+    } else {
+      console.error('create a task: got an invalid message');
+    }
+
+
 
     return task;
   }
@@ -70,16 +86,30 @@ export class TasksService {
         task.publicId,
         { userId: randomUserId }
       )
+
       const message: TaskMessageType = {
-        event: 'task.reassigned',
-        payload: updatedTask
+        event_id: crypto.randomUUID(),
+        event_version: 1,
+        event_time: Date.now().toString(),
+        event_name: 'task.reassigned',
+        data: {
+          ...updatedTask,
+          createdAt: updatedTask.createdAt.toString(),
+          updatedAt: updatedTask.updatedAt.toString()
+        }
       }
-      messages.push({ value: JSON.stringify(message) });
+
+      if (isMessageValid(message)) {
+        messages.push({ value: JSON.stringify(message) });
+      } else {
+        console.error('got an invalid message');
+      }
+
     }
 
     const recordMetadata: RecordMetadata[] = await this.producerService.produce(
       {
-        topic: 'tasks_cycle',
+        topic: 'tasks.streaming',
         messages
     })
 
@@ -96,8 +126,35 @@ export class TasksService {
     return this.dbService.getTask(id);
   }
 
-  update(id: string, updateTaskDto: UpdateTaskDto) {
-    return this.dbService.updateTask(id, updateTaskDto);
+  async update(id: string, updateTaskDto: UpdateTaskDto) {
+    const taskStatus = updateTaskDto.status;
+
+    const updatedTask = await this.dbService.updateTask(id, updateTaskDto);
+
+    if (taskStatus === 'done') {
+      const message: TaskMessageType = {
+        event_id: crypto.randomUUID(),
+        event_version: 1,
+        event_time: Date.now().toString(),
+        event_name: 'task.finished',
+        data: {
+          ...updatedTask,
+          createdAt: updatedTask.createdAt.toString(),
+          updatedAt: updatedTask.updatedAt.toString()
+        }
+      }
+
+      if(isMessageValid(message)) {
+        return await this.producerService.produce(
+          {
+            topic: 'tasks.streaming',
+            messages: [{ value: JSON.stringify(message) }]
+          }
+        );
+      } else {
+        console.error('go invalid message');
+      }
+    }
   }
 
   remove(id: string) {
@@ -107,4 +164,12 @@ export class TasksService {
 
 function getRandomInt(max): number {
   return Math.floor(Math.random() * max);
+}
+
+function isMessageValid(message: TaskMessageType): boolean {
+  const validate = ajv.getSchema<TaskMessageType>("task.message")
+  console.log({validate});
+  const res = validate && validate(message)
+  console.log({res});
+  return Boolean(res)
 }
