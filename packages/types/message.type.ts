@@ -33,7 +33,7 @@ export type TaskMessageType = {
   data: TaskPayload;
 }
 
-type TransactionPayload = {
+export type TransactionPayload = {
   publicId: string;
   createdAt: string;
   amount: number;
