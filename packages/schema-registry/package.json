@@ -1,0 +1,11 @@
+{
+  "name": "@async-arch/schema-registry",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@async-arch/types": "*",
+    "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1"
+  }
+}

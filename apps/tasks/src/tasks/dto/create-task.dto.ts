@@ -12,4 +12,5 @@ export class CreateTaskDto {
 
 export interface CreateTaskInterface extends CreateTaskDto {
   userId: string;
+  jiraId: string;
 }

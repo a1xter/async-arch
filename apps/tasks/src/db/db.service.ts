@@ -11,16 +11,10 @@ export class DbService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createTask(task: CreateTaskInterface): Promise<Task> {
-    const { title, description, userId } = task;
     const publicId = crypto.randomUUID();
 
     return this.prisma.task.create({
-      data: {
-        title,
-        description,
-        publicId,
-        userId
-      },
+      data: { ...task, publicId },
     });
   }
 
@@ -29,7 +23,7 @@ export class DbService {
     return this.prisma.task.findMany({where: { status: 'open' }});
   }
 
-  async getTask(id: string): Promise<Task> {
+  async getTask(id: string): Promise<Task | null> {
     return this.prisma.task.findUnique({
       where: { publicId: id },
     });
@@ -50,14 +44,14 @@ export class DbService {
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     return await this.prisma.user.create({
-      data: {...createUserDto}
+      data: { ...createUserDto }
     })
   }
 
   async updateUser(createUserDto: CreateUserDto): Promise<User> {
     return await this.prisma.user.update({
       where: { publicId: createUserDto.publicId },
-      data: {...createUserDto}
+      data: { ...createUserDto }
     })
 
   }

@@ -1,5 +1,5 @@
 export interface UserInterface {
-  public_id: string;
+  publicId: string;
   username: string;
   email: string;
   role: 'user' | 'admin'
